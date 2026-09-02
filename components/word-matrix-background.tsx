@@ -38,27 +38,60 @@ type WordMatrixBackgroundProps = {
 
 type Line = WordCell[]
 
-// ---- Cell: a single word that flashes briefly when its text changes ----
+// Durations for the two-phase swap: flash-then-vanish, then a new word
+// (of the same length) flashes back in from nothing.
+const FADE_OUT_MS = 420
+const FADE_IN_MS = 700
+
+// ---- Cell: a single word that fades out, swaps, then fades back in ----
 const Cell = memo(function Cell({ text }: { text: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
+  const [displayText, setDisplayText] = useState(text)
+  const [phase, setPhase] = useState<"idle" | "out" | "in">("idle")
+  const [epoch, setEpoch] = useState(0)
   const mounted = useRef(false)
+  const outTimer = useRef<number | null>(null)
+  const inTimer = useRef<number | null>(null)
 
   useEffect(() => {
     if (!mounted.current) {
       mounted.current = true
       return
     }
-    const el = ref.current
-    if (!el) return
-    el.classList.remove("wm-flash")
-    // Force reflow so the animation restarts on every change.
-    void el.offsetWidth
-    el.classList.add("wm-flash")
+    if (text === displayText) return
+
+    if (outTimer.current) window.clearTimeout(outTimer.current)
+    if (inTimer.current) window.clearTimeout(inTimer.current)
+
+    // Phase 1: flash, then fade the current word out to nothing.
+    setPhase("out")
+    setEpoch((e) => e + 1)
+
+    outTimer.current = window.setTimeout(() => {
+      // Swap the text while fully invisible, then flash the new word in.
+      setDisplayText(text)
+      setPhase("in")
+      setEpoch((e) => e + 1)
+      inTimer.current = window.setTimeout(() => {
+        setPhase("idle")
+      }, FADE_IN_MS)
+    }, FADE_OUT_MS)
+    // Only re-run this cycle when the target text actually changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text])
 
+  useEffect(() => {
+    return () => {
+      if (outTimer.current) window.clearTimeout(outTimer.current)
+      if (inTimer.current) window.clearTimeout(inTimer.current)
+    }
+  }, [])
+
+  const phaseClass =
+    phase === "out" ? "wm-fade-out" : phase === "in" ? "wm-fade-in" : ""
+
   return (
-    <span ref={ref} className="wm-word">
-      {text}
+    <span key={epoch} className={`wm-word ${phaseClass}`.trim()}>
+      {displayText}
     </span>
   )
 })
@@ -249,15 +282,22 @@ export function WordMatrixBackground({
           overflow: hidden;
           height: ${lineHeight}px;
         }
-        .wm-word { color: var(--wm-word); }
+        .wm-word { color: var(--wm-word); opacity: 1; display: inline-block; }
         .wm-sep { color: var(--wm-sep); }
-        .wm-flash { animation: wmFlash 1000ms ease-out; }
-        @keyframes wmFlash {
-          0% { color: var(--wm-flash); }
-          100% { color: var(--wm-word); }
+        .wm-fade-out { animation: wmFadeOut ${FADE_OUT_MS}ms ease-in forwards; }
+        .wm-fade-in { animation: wmFadeIn ${FADE_IN_MS}ms ease-out forwards; }
+        @keyframes wmFadeOut {
+          0% { color: var(--wm-flash); opacity: 1; }
+          35% { color: var(--wm-flash); opacity: 1; }
+          100% { color: var(--wm-word); opacity: 0; }
+        }
+        @keyframes wmFadeIn {
+          0% { color: var(--wm-flash); opacity: 0; }
+          45% { color: var(--wm-flash); opacity: 1; }
+          100% { color: var(--wm-word); opacity: 1; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .wm-flash { animation: none; }
+          .wm-fade-out, .wm-fade-in { animation: none; }
         }
       `}</style>
 
