@@ -1,7 +1,11 @@
-# animated-word-matrix-hero
-
+# Random Animated Word Matrix Hero
+![Alt Text](https://github.com/jaykdoe/animated-word-matrix-hero/blob/main/screenshots/animated-random-word-matrix.gif?raw=true)
+## Multicolor Mode
+![Alt Text](https://github.com/jaykdoe/animated-word-matrix-hero/blob/main/screenshots/screenshot-multi-color-2.jpeg?raw=true)
+## Monotone Mode
+![Alt Text](https://github.com/jaykdoe/animated-word-matrix-hero/blob/main/screenshots/screenshot-monotone.jpeg?raw=true)
 This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
-
+<img src="screenshots/screenshot-multi-color.jpg" alt="Description" width="500">
 ## Built with v0
 
 This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
