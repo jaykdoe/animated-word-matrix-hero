@@ -33,6 +33,8 @@ type WordMatrixBackgroundProps = {
   swapIntervalMs?: number
   /** how many words are swapped on each tick. */
   swapsPerTick?: number
+  /** When true, each swapped word flashes a random bright color instead of the default monotone flash. */
+  multicolor?: boolean
   className?: string
 }
 
@@ -48,8 +50,16 @@ function randomFlashColor() {
   return `hsl(${hue} ${saturation}% ${lightness}%)`
 }
 
-// ---- Cell: a single word that flashes a random bright color when its text changes ----
-const Cell = memo(function Cell({ text }: { text: string }) {
+// ---- Cell: a single word that flashes briefly when its text changes ----
+// (a random bright color when `multicolor` is enabled, otherwise the
+// default monotone flash color)
+const Cell = memo(function Cell({
+  text,
+  multicolor,
+}: {
+  text: string
+  multicolor: boolean
+}) {
   const ref = useRef<HTMLSpanElement>(null)
   const mounted = useRef(false)
 
@@ -60,12 +70,16 @@ const Cell = memo(function Cell({ text }: { text: string }) {
     }
     const el = ref.current
     if (!el) return
-    el.style.setProperty("--wm-flash-color", randomFlashColor())
+    if (multicolor) {
+      el.style.setProperty("--wm-flash-color", randomFlashColor())
+    } else {
+      el.style.removeProperty("--wm-flash-color")
+    }
     el.classList.remove("wm-flash")
     // Force reflow so the animation restarts on every change.
     void el.offsetWidth
     el.classList.add("wm-flash")
-  }, [text])
+  }, [text, multicolor])
 
   return (
     <span ref={ref} className="wm-word">
@@ -79,10 +93,12 @@ const Row = memo(function Row({
   words,
   columns,
   separator,
+  multicolor,
 }: {
   words: Line
   columns: number
   separator: string
+  multicolor: boolean
 }) {
   const fill = trailingFill(words, columns)
   return (
@@ -90,7 +106,7 @@ const Row = memo(function Row({
       {words.map((cell, i) => (
         <span key={cell.id}>
           {i > 0 ? <span className="wm-sep">{separator}</span> : null}
-          <Cell text={cell.text} />
+          <Cell text={cell.text} multicolor={multicolor} />
         </span>
       ))}
       {fill > 0 ? (
@@ -107,6 +123,7 @@ export function WordMatrixBackground({
   separator = "·",
   swapIntervalMs = 110,
   swapsPerTick = 3,
+  multicolor = false,
   className,
 }: WordMatrixBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -273,7 +290,13 @@ export function WordMatrixBackground({
       `}</style>
 
       {grid.map((words, r) => (
-        <Row key={r} words={words} columns={columns} separator={separator} />
+        <Row
+          key={r}
+          words={words}
+          columns={columns}
+          separator={separator}
+          multicolor={multicolor}
+        />
       ))}
     </div>
   )

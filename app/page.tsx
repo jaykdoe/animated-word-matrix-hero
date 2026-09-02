@@ -3,7 +3,7 @@ import { WordMatrixBackground } from "@/components/word-matrix-background"
 export default function Page() {
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background text-foreground">
-      <WordMatrixBackground />
+      <WordMatrixBackground multicolor />
 
       {/* Vignette so the centered content stays legible over the matrix. */}
       <div
