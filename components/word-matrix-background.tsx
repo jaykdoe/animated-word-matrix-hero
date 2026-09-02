@@ -38,7 +38,17 @@ type WordMatrixBackgroundProps = {
 
 type Line = WordCell[]
 
-// ---- Cell: a single word that flashes briefly when its text changes ----
+// Pick a bright, saturated hue. High saturation + mid-high lightness keeps
+// every hue vivid, which rules out grays (need low saturation) and browns
+// (muddy orange/yellow that need low saturation and/or low lightness).
+function randomFlashColor() {
+  const hue = Math.floor(Math.random() * 360)
+  const saturation = 85 + Math.random() * 15 // 85-100%
+  const lightness = 55 + Math.random() * 15 // 55-70%
+  return `hsl(${hue} ${saturation}% ${lightness}%)`
+}
+
+// ---- Cell: a single word that flashes a random bright color when its text changes ----
 const Cell = memo(function Cell({ text }: { text: string }) {
   const ref = useRef<HTMLSpanElement>(null)
   const mounted = useRef(false)
@@ -50,6 +60,7 @@ const Cell = memo(function Cell({ text }: { text: string }) {
     }
     const el = ref.current
     if (!el) return
+    el.style.setProperty("--wm-flash-color", randomFlashColor())
     el.classList.remove("wm-flash")
     // Force reflow so the animation restarts on every change.
     void el.offsetWidth
@@ -253,7 +264,7 @@ export function WordMatrixBackground({
         .wm-sep { color: var(--wm-sep); }
         .wm-flash { animation: wmFlash 1000ms ease-out; }
         @keyframes wmFlash {
-          0% { color: var(--wm-flash); }
+          0% { color: var(--wm-flash-color, var(--wm-flash)); }
           100% { color: var(--wm-word); }
         }
         @media (prefers-reduced-motion: reduce) {
