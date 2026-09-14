@@ -10,12 +10,12 @@
   "dependencies": {
     "@base-ui/react": "^1.5.0",
     "@vercel/analytics": "1.6.1",
+    "@wrksz/themes": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.16.0",
     "motion": "^13.2.0",
     "next": "16.3.3",
-    "next-themes": "^0.4.6",
     "react": "^19",
     "react-dom": "^19",
     "shadcn": "^4.11.0",

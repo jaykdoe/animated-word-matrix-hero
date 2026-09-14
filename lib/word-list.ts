@@ -28,16 +28,16 @@ function containsProfanity(word: string): boolean {
 
   // Check if the word is in the blocklist
   if (PROFANITY_BLOCKLIST.has(lowerWord)) {
-    console.log("containsProfanity: ", lowerWord)
+    // console.log("containsProfanity: ", lowerWord)
     return true
   }
 
   // Check if any blocklisted substring is contained in the word
-  for (const blocked of PROFANITY_BLOCKLIST) {
-    if (lowerWord.includes(blocked)) {
-      return true
-    }
-  }
+  // for (const blocked of PROFANITY_BLOCKLIST) {
+  //   if (lowerWord.includes(blocked)) {
+  //     return true
+  //   }
+  // }
 
   return false
 }

@@ -19,7 +19,7 @@ import {
   type WordsByLength,
 } from "@/lib/word-matrix"
 import { UNIQUE_WORDS } from "@/lib/word-list"
-
+import { getFromLocalStorage } from "@/lib/local-storage"
 
 type WordMatrixBackgroundProps = {
   /** Words to rotate through. Needs short words to fill lines exactly. */
@@ -234,7 +234,8 @@ export function WordMatrixBackground({
     return () => window.clearInterval(id)
   }, [grid.length, swapIntervalMs, swapsPerTick, wl])
 
-    const theme = localStorage?.getItem("theme");
+const theme = getFromLocalStorage("theme");
+
   return (
     <div
       ref={containerRef}
@@ -254,7 +255,7 @@ export function WordMatrixBackground({
         // Words are translucent; a freshly-swapped word flashes to full
         // strength and eases back down.
         ["--wm-word" as string]:
-          `color-mix(in oklch, ${theme==="dark" ? "var(--foreground) 70%, transparent)" :  "var(-background) 70%, transparent)"}`,
+          `color-mix(in oklch, ${theme==="dark" ? "var(--foreground) 70%, transparent)" :  "var(--foreground) 70%, transparent)"}`,
         ["--wm-sep" as string]:
           `color-mix(in oklch,  ${theme==="dark" ? "var(--foreground)" : theme==="light" ? "var(--background)" :  "var(--background)"} 10%, transparent)`,
         ["--wm-flash" as string]: `${theme==="dark" ? "var(--foreground)" : theme==="light" ? "var(--background)" :  "var(--background)"}`,

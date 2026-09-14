@@ -1,12 +1,22 @@
 'use client'
 
+import { useState } from "react"
 import { WordMatrixBackground } from "@/components/word-matrix-background"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { MulticolorSelect } from "@/components/ui/multicolor-toggle"
+import { addToLocalStorage, getFromLocalStorage, isItemInLocalStorage } from "@/lib/local-storage"
 
+interface effectProps {
+  effect: "multicolor" | "monocolor"
+}
 export default function Page() {
+  const [selectedEffect, setSelectedEffect] = useState<effectProps>("multicolor")
+  const currentEffect = getFromLocalStorage("colorEffect")
+  const multicolor = currentEffect === "multicolor" ? true : false
+  const handleChange = (value: string) => setSelectedEffect(value)
   return (
     <main className={`relative flex min-h-screen items-center justify-center overflow-hidden bg-background text-foreground`}>
-      <WordMatrixBackground multicolor />
+      <WordMatrixBackground multicolor={multicolor} />
 
       {/* Vignette so the centered content stays legible over the matrix. */}
       <div
@@ -30,6 +40,7 @@ export default function Page() {
           full, and endlessly rotates words in place.
         </p>
               <div><ThemeToggle/></div>
+               <div><MulticolorSelect userSelectedEffect="multicolor" onChange={handleChange}/></div>
       </div>
     </main>
   )

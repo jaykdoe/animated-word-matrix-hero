@@ -1,18 +1,22 @@
 'use client'
 
 import { useState } from "react"
-import { useTheme } from 'next-themes'
+import { useTheme } from "@wrksz/themes/client"
 import { Button } from "@/components/ui/button"
 import { useClickSound } from "@/hooks/soundcn/use-click-sound"
 import { ThemeToggleEffectSelector } from "./theme-toggle-effect-selector"
+import { addToLocalStorage, getFromLocalStorage, isItemInLocalStorage } from "@/lib/local-storage"
 
 export function ThemeToggle() {
     // const { resolvedTheme, setTheme } = useTheme()
     const { theme, setTheme } = useTheme();
     const [click] = useClickSound()
 
-      const switchTheme = () => {
+    const switchTheme = () => {
+    // const currentTheme = isItemInLocalStorage("theme") === true ? getFromLocalStorage("theme") : null
+    // currentTheme !== null ? currentTheme === "dark" ? addToLocalStorage("theme", "light") : addToLocalStorage("theme", "dark") : addToLocalStorage("theme", "dark")
     setTheme(theme === "dark" ? "light" : "dark")
+    click()
   }
  
     const handleThemeToggleClick = () => {
@@ -20,14 +24,14 @@ export function ThemeToggle() {
     else document.startViewTransition(switchTheme)
   }
 
-  function toggleTheme(theme: string) {
-  if (!document.startViewTransition) {
-    setTheme(theme)
-    return
-  }
+//   function toggleTheme(theme: string) {
+//   if (!document.startViewTransition) {
+//     setTheme(theme)
+//     return
+//   }
  
-  document.startViewTransition(() => setTheme(theme))
-}
+//   document.startViewTransition(() => setTheme(theme))
+// }
     return(
         <div className="block gap-2 mx-auto">
         <ThemeToggleEffectSelector />
