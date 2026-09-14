@@ -1,8 +1,11 @@
+'use client'
+
 import { WordMatrixBackground } from "@/components/word-matrix-background"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 export default function Page() {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background text-foreground">
+    <main className={`relative flex min-h-screen items-center justify-center overflow-hidden bg-background text-foreground`}>
       <WordMatrixBackground multicolor />
 
       {/* Vignette so the centered content stays legible over the matrix. */}
@@ -26,6 +29,7 @@ export default function Page() {
           A living field of text that measures itself, packs each row exactly
           full, and endlessly rotates words in place.
         </p>
+              <div><ThemeToggle/></div>
       </div>
     </main>
   )

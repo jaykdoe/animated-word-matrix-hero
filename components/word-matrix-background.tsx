@@ -20,6 +20,7 @@ import {
 } from "@/lib/word-matrix"
 import { UNIQUE_WORDS } from "@/lib/word-list"
 
+
 type WordMatrixBackgroundProps = {
   /** Words to rotate through. Needs short words to fill lines exactly. */
   words?: string[]
@@ -35,6 +36,9 @@ type WordMatrixBackgroundProps = {
   swapsPerTick?: number
   /** When true, each swapped word flashes a random bright color instead of the default monotone flash. */
   multicolor?: boolean
+  /** Theme for the flash animation. */
+  theme?: "light" | "dark"
+  /** Class name to apply to the container. */
   className?: string
 }
 
@@ -230,6 +234,7 @@ export function WordMatrixBackground({
     return () => window.clearInterval(id)
   }, [grid.length, swapIntervalMs, swapsPerTick, wl])
 
+    const theme = localStorage?.getItem("theme");
   return (
     <div
       ref={containerRef}
@@ -249,10 +254,16 @@ export function WordMatrixBackground({
         // Words are translucent; a freshly-swapped word flashes to full
         // strength and eases back down.
         ["--wm-word" as string]:
-          "color-mix(in oklch, var(--foreground) 40%, transparent)",
+          `color-mix(in oklch, ${theme==="dark" ? "var(--foreground) 70%, transparent)" :  "var(-background) 70%, transparent)"}`,
         ["--wm-sep" as string]:
-          "color-mix(in oklch, var(--foreground) 10%, transparent)",
-        ["--wm-flash" as string]: "var(--foreground)",
+          `color-mix(in oklch,  ${theme==="dark" ? "var(--foreground)" : theme==="light" ? "var(--background)" :  "var(--background)"} 10%, transparent)`,
+        ["--wm-flash" as string]: `${theme==="dark" ? "var(--foreground)" : theme==="light" ? "var(--background)" :  "var(--background)"}`,
+        color: "#E8E8E8",
+        // ["--wm-word" as string]:
+        //   "color-mix(in oklch, var(--foreground) 40%, transparent)",
+        // ["--wm-sep" as string]:
+        //   "color-mix(in oklch, var(--foreground) 10%, transparent)",
+        // ["--wm-flash" as string]: "var(--foreground)",
       }}
     >
       {/* Offscreen sample used to measure exact monospace character width. */}
