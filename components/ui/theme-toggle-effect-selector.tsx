@@ -37,6 +37,7 @@ export function ThemeToggleEffectSelector() {
   }, [])
 
   return (
+    <div className="w-full max-w-48 bg-transparent">
     <Select
       value={effectName}
       onValueChange={(selectedEffect) =>
@@ -44,13 +45,13 @@ export function ThemeToggleEffectSelector() {
       }
     >
       <SelectTrigger
-        className="w-50 *:data-[slot=select-value]:gap-2"
+        className="w-48 max-w-64 bg-black/40 backdrop-blur-md text-black dark:text-white border-2 border-black dark:border-white *:data-[slot=select-value]:gap-2"
         aria-label="Select Effect"
       >
         <SelectValue placeholder="Effect" />
       </SelectTrigger>
 
-      <SelectContent>
+      <SelectContent className="w-48 max-w-64 bg-white/20 dark:bg-black/40 backdrop-blur-md">
         <SelectGroup>
           <SelectLabel>Effect</SelectLabel>
           {Object.entries(EFFECTS).map(([effectKey, effect]) => (
@@ -62,6 +63,7 @@ export function ThemeToggleEffectSelector() {
         </SelectGroup>
       </SelectContent>
     </Select>
+    </div>
   )
 }
 

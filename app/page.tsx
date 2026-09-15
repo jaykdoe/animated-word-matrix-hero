@@ -5,6 +5,9 @@ import { WordMatrixBackground } from "@/components/word-matrix-background"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { MulticolorSelect } from "@/components/ui/multicolor-toggle"
 import { addToLocalStorage, getFromLocalStorage, isItemInLocalStorage } from "@/lib/local-storage"
+import StickerDemo from "@/components/stickers/demos/demo"
+import StickerDemos from "@/components/stickers/demos"
+import StickerPage from "./sticker/page"
 
 interface effectProps {
   effect:  "multicolor" | "monocolor" | string | null
@@ -18,6 +21,7 @@ export default function Page() {
   const [mounted, setMounted] = useState(false)
   const [mountedEffect, setMountedEffect] = useState<"multicolor" | "monocolor">("multicolor")
   const effect = isItemInLocalStorage("colorEffect") === true ? getFromLocalStorage("colorEffect") : null
+  const [theme, setTheme] = useState<"light" | "dark" | string | null | undefined>(isItemInLocalStorage("theme") === true ? getFromLocalStorage("theme") : 'dark')
   const [selectedEffect, setSelectedEffect] = useState({ effect: "multicolor" })
    const handleChange = (value: multiColorSelectProps["userSelectedEffect"]) => {
     setSelectedEffect({ effect: value })
@@ -53,10 +57,12 @@ export default function Page() {
           A living field of text that measures itself, packs each row exactly
           full, and endlessly rotates words in place.
         </p>
-              <div><ThemeToggle/></div>
+              <div><ThemeToggle userSelectedEffect={selectedEffect.effect} onChange={handleChange}/></div>
                <div><MulticolorSelect userSelectedEffect={selectedEffect.effect} onChange={handleChange}/></div>
-               <div className="mt-6 z-999 text-rose-500 text-pretty text-xl leading-relaxe md:text-base">multicolor: {selectedEffect.effect}</div>
-               <div className="text-pretty text-sm leading-relaxed text-muted-foreground md:text-base">{selectedEffect.effect}</div>
+               <div><StickerPage theme={theme} onChangeTheme={setTheme} userSelectedEffect={selectedEffect.effect} onChange={handleChange} /></div>
+               {/* <div><StickerDemo /></div> */}
+               {/* <div className="mt-6 z-999 text-rose-500 text-pretty text-xl leading-relaxe md:text-base">multicolor: {selectedEffect.effect}</div>
+               <div className="text-pretty text-sm leading-relaxed text-muted-foreground md:text-base">{selectedEffect.effect}</div> */}
       </div>
     </main>
   )

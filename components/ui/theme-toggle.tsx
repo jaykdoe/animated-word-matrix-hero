@@ -7,10 +7,19 @@ import { useClickSound } from "@/hooks/soundcn/use-click-sound"
 import { ThemeToggleEffectSelector } from "./theme-toggle-effect-selector"
 import { addToLocalStorage, getFromLocalStorage, isItemInLocalStorage } from "@/lib/local-storage"
 
+interface iconToggleProps {
+  userSelectedEffect:  "multicolor" | "monocolor" | string | null
+  onChange: (value: string) => void
+  size?: number
+  color: string
+  className?: string
+}
+
 export function ThemeToggle() {
     // const { resolvedTheme, setTheme } = useTheme()
     const { theme, setTheme } = useTheme();
     const [click] = useClickSound()
+
 
     const switchTheme = () => {
     // const currentTheme = isItemInLocalStorage("theme") === true ? getFromLocalStorage("theme") : null
@@ -52,7 +61,9 @@ export function ThemeToggle() {
     ) 
 }
 
-const MoonIcon = ({size=18, color="#000000", className=""}: {size?: number, color: string, className?: string}) => {
+const MoonIcon = ({userSelectedEffect="multicolor", onChange=(value: string) => {}, size=18, color="#000000", className=""}: iconToggleProps ) => {
+  const [selectedEffect, setSelectedEffect] = useState(userSelectedEffect)
+  const handleChange = {onChange}
     return (
          <div className={`flex items-center justify-center` + className}>
             <svg width={size + `px`} height={size + `px`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -67,9 +78,11 @@ const MoonIcon = ({size=18, color="#000000", className=""}: {size?: number, colo
     )
 }
 
-const SunIcon = ({size=18, color="FFFFFF", className=""}: {size?: number, color: string, className?: string}) => {
+const SunIcon = ({userSelectedEffect="multicolor", onChange=(value: string) => {}, size=18, color="#000000", className=""}: iconToggleProps ) => {
+  const [selectedEffect, setSelectedEffect] = useState(userSelectedEffect)
+  const handleChange = {onChange}
     return (
-        <div className={`flex items-center justify-center` + className}>
+        <div className={`flex items-center justify-center` + selectedEffect === "multicolor" ? "animate-pulse" : "" + className}>
             <svg width={size + `px`} height={size + `px`}  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 
             <g id="SVGRepo_bgCarrier" strokeWidth="0"/>

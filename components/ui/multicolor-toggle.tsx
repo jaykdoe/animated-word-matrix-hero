@@ -39,11 +39,11 @@ currentEffect !== null ? currentEffect === "multicolor" ? addToLocalStorage("col
   return (
     <div className="w-full max-w-48 bg-transparent">
     <Select items={items} value={userSelectedEffect} onValueChange={onChange}>
-      <SelectTrigger className="w-48 max-w-64 bg-black/40 backdrop-blur-md">
+      <SelectTrigger className="w-48 max-w-64 bg-black/40 backdrop-blur-md text-black dark:text-white border-2 border-black dark:border-white  *:data-[slot=select-value]:gap-2">
         <SelectValue placeholder="Color Effect">{userSelectedEffect}</SelectValue>
       </SelectTrigger>
       <SelectContent
-        className="w-48 max-w-64 bg-black/40 backdrop-blur-md"
+        className="w-48 max-w-64 bg-white/20 dark:bg-black/40 backdrop-blur-md"
       side = "bottom"
       sideOffset = {4}
       align = "center"
