@@ -38,6 +38,8 @@ type WordMatrixBackgroundProps = {
   multicolor?: boolean
   /** Theme for the flash animation. */
   theme?: "light" | "dark"
+   // new prop for effect
+  effect?: string | null
   /** Class name to apply to the container. */
   className?: string
 }
@@ -128,14 +130,15 @@ export function WordMatrixBackground({
   swapIntervalMs = 110,
   swapsPerTick = 3,
   multicolor = false,
+  effect = "multicolor",
   className,
 }: WordMatrixBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
-
+  const [multicolorEffect, setMulticolorEffect] = useState(multicolor)
   const [grid, setGrid] = useState<Line[]>([])
   const [columns, setColumns] = useState(0)
-
+  const [selectedEffect, setSelectedEffect] = useState({ effect: "multicolor" })
   const wl: WordsByLength = useMemo(() => groupByLength(words), [words])
   const lineHeight = Math.round(fontSize * lineHeightRatio)
 
@@ -145,6 +148,12 @@ export function WordMatrixBackground({
   gridRef.current = grid
   columnsRef.current = columns
 
+    useEffect(() => {
+    setSelectedEffect({ effect: effect as "multicolor" | "monocolor" | string })
+    setMulticolorEffect(selectedEffect.effect === "multicolor" ? true : false)
+    console.log("multicolorEffect: ", multicolorEffect, "multicolor: ", multicolor, "effect: ", effect)
+  }, [effect, multicolor])
+  
   // Build the whole matrix for a given size.
   const build = useCallback(
     (cols: number, rows: number) => {
@@ -259,6 +268,7 @@ const theme = getFromLocalStorage("theme");
         ["--wm-sep" as string]:
           `color-mix(in oklch,  ${theme==="dark" ? "var(--foreground)" : theme==="light" ? "var(--background)" :  "var(--background)"} 10%, transparent)`,
         ["--wm-flash" as string]: `${theme==="dark" ? "var(--foreground)" : theme==="light" ? "var(--background)" :  "var(--background)"}`,
+        //  ["--wm-flash-color" as string]: multicolorEffect ? randomFlashColor() : undefined,
         color: "#E8E8E8",
         // ["--wm-word" as string]:
         //   "color-mix(in oklch, var(--foreground) 40%, transparent)",
@@ -307,7 +317,7 @@ const theme = getFromLocalStorage("theme");
           words={words}
           columns={columns}
           separator={separator}
-          multicolor={multicolor}
+          multicolor={!multicolorEffect}
         />
       ))}
     </div>

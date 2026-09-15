@@ -1,22 +1,36 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { WordMatrixBackground } from "@/components/word-matrix-background"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { MulticolorSelect } from "@/components/ui/multicolor-toggle"
 import { addToLocalStorage, getFromLocalStorage, isItemInLocalStorage } from "@/lib/local-storage"
 
 interface effectProps {
-  effect: "multicolor" | "monocolor"
+  effect:  "multicolor" | "monocolor" | string | null
 }
+interface multiColorSelectProps {
+  userSelectedEffect:  "multicolor" | "monocolor" | string | null
+  onChange: (value: string) => void
+}
+
 export default function Page() {
-  const [selectedEffect, setSelectedEffect] = useState<effectProps>("multicolor")
-  const currentEffect = getFromLocalStorage("colorEffect")
-  const multicolor = currentEffect === "multicolor" ? true : false
-  const handleChange = (value: string) => setSelectedEffect(value)
+  const [mounted, setMounted] = useState(false)
+  const [mountedEffect, setMountedEffect] = useState<"multicolor" | "monocolor">("multicolor")
+  const effect = isItemInLocalStorage("colorEffect") === true ? getFromLocalStorage("colorEffect") : null
+  const [selectedEffect, setSelectedEffect] = useState({ effect: "multicolor" })
+   const handleChange = (value: multiColorSelectProps["userSelectedEffect"]) => {
+    setSelectedEffect({ effect: value })
+  }
+
+  useEffect(() => {
+    setMounted(true)
+    setMountedEffect(effect as "multicolor" | "monocolor")
+  }, [])
+ 
   return (
     <main className={`relative flex min-h-screen items-center justify-center overflow-hidden bg-background text-foreground`}>
-      <WordMatrixBackground multicolor={multicolor} />
+      <WordMatrixBackground effect={selectedEffect.effect} />
 
       {/* Vignette so the centered content stays legible over the matrix. */}
       <div
@@ -40,7 +54,9 @@ export default function Page() {
           full, and endlessly rotates words in place.
         </p>
               <div><ThemeToggle/></div>
-               <div><MulticolorSelect userSelectedEffect="multicolor" onChange={handleChange}/></div>
+               <div><MulticolorSelect userSelectedEffect={selectedEffect.effect} onChange={handleChange}/></div>
+               <div className="mt-6 z-999 text-rose-500 text-pretty text-xl leading-relaxe md:text-base">multicolor: {selectedEffect.effect}</div>
+               <div className="text-pretty text-sm leading-relaxed text-muted-foreground md:text-base">{selectedEffect.effect}</div>
       </div>
     </main>
   )

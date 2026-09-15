@@ -11,15 +11,15 @@ import {
 import { addToLocalStorage, getFromLocalStorage, isItemInLocalStorage } from "@/lib/local-storage"
 
 interface effectProps {
-  effect: "multicolor" | "monocolor"
+  effect: string | null
 }
 
 interface multiColorSelectProps {
-  userSelectedEffect: effectProps
+  userSelectedEffect:  "multicolor" | "monocolor" | string | null
   onChange: (value: string) => void
 }
 
-export function MulticolorSelect({ userSelectedEffect="multicolor", onChange }: multiColorSelectProps) {
+export function MulticolorSelect({ userSelectedEffect, onChange }: multiColorSelectProps) {
   const [selectedEffect, setSelectedEffect] = useState(userSelectedEffect)
   const handleChange = {onChange}
 
@@ -29,7 +29,7 @@ const items = [
   { label: "MonoColor", value: "monocolor", icon: <MonocolorIcon size={24} /> },
 ]
 
-const handleValueChange = (value: effectProps) => {
+const handleValueChange = (value: multiColorSelectProps ["userSelectedEffect"]) => {
 const currentEffect = isItemInLocalStorage("colorEffect") === true ? getFromLocalStorage("colorEffect") : null
 currentEffect !== null ? currentEffect === "multicolor" ? addToLocalStorage("colorEffect", value) : addToLocalStorage("colorEffect", value) : addToLocalStorage("colorEffect", value)
   setSelectedEffect(value)
@@ -38,9 +38,9 @@ currentEffect !== null ? currentEffect === "multicolor" ? addToLocalStorage("col
 
   return (
     <div className="w-full max-w-48 bg-transparent">
-    <Select  items={items} value={selectedEffect} onValueChange={handleValueChange}>
+    <Select items={items} value={userSelectedEffect} onValueChange={onChange}>
       <SelectTrigger className="w-48 max-w-64 bg-black/40 backdrop-blur-md">
-        <SelectValue placeholder="Color Effect">{selectedEffect}</SelectValue>
+        <SelectValue placeholder="Color Effect">{userSelectedEffect}</SelectValue>
       </SelectTrigger>
       <SelectContent
         className="w-48 max-w-64 bg-black/40 backdrop-blur-md"
