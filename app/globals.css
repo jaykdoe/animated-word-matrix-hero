@@ -440,16 +440,29 @@
 
 @keyframes float {
 	0% {
-		box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6);
+		/* box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6); */
 		transform: translatey(0px);
+    transform: translatex(0px);
+	}
+  	25% {
+		/* box-shadow: 0 25px 15px 0px rgba(0,0,0,0.2); */
+		transform: translatey(-20px);
+    transform: translatex(-20px);
 	}
 	50% {
-		box-shadow: 0 25px 15px 0px rgba(0,0,0,0.2);
-		transform: translatey(-20px);
-	}
-	100% {
-		box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6);
+		/* box-shadow: 0 25px 15px 0px rgba(0,0,0,0.2); */
 		transform: translatey(0px);
+    transform: translatex(0px);
+	}
+  75% {
+    /* box-shadow: 0 25px 15px 0px rgba(0,0,0,0.2); */
+    transform: translatey(20px);
+    transform: translatex(20px);
+  }
+	100% {
+		/* box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6); */
+		transform: translatey(0px);
+    transform: translatex(20px);
 	}
 }
 .float-x-animation {
@@ -468,6 +481,21 @@
 	100% {
 		box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6);
 		transform: translatex(0px);
+	}
+}
+
+.spin-slow-snimation {
+	animation: spin-slow 10s ease-in-out infinite;
+}
+@keyframes spin-slow {
+	0% {
+		transform: rotate(0deg);
+	}
+	50% {
+		transform: rotate(180deg);
+	}
+	100% {
+			transform: rotate(360deg);
 	}
 }
 

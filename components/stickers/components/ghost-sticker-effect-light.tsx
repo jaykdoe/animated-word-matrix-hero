@@ -142,12 +142,12 @@ function NotchControls({
   return (
     <motion.div
       className={cn(
-        "bg-black/40 backdrop-blur-sm border border-zinc-800 shadow-xl overflow-hidden will-change-transform w-24 h-24",
-        isOpen ? "rounded-3xl cursor-default max-h-96" : "rounded-full cursor-pointer hover:bg-black/60"
+        "bg-white/40 backdrop-blur-sm border border-zinc-800 shadow-xl overflow-hidden will-change-transform max-w-16 h-16",
+        isOpen ? "rounded-3xl cursor-default max-h-96 max-w-140" : "rounded-full cursor-pointer hover:bg-white/60"
       )}
       animate={{
-        height: isOpen ? 520 : 64,
-        width: isOpen ? 560 : 200,
+        height: isOpen ? 384 : 64,
+        width: isOpen ? 560 : 64,
       }}
       transition={{ type: "spring", bounce: 0, duration: 0.4 }}
     >
@@ -155,18 +155,18 @@ function NotchControls({
       <div
         onClick={!isOpen ? handleToggle : undefined}
         className={cn(
-          "flex items-center justify-between h-16 px-6",
+          "flex items-center justify-between h-16 px-4 text-zinc-400 hover:text-zinc-100 transition-colors",
           isOpen && "border-b border-zinc-800/50"
         )}
       >
-        <div className="flex items-center gap-3 text-zinc-100">
-          <Settings size={20} className={cn(!isOpen && "animate-spin-slow")} />
+        <div className="flex items-center ml-1/2 mr-1/2 text-zinc-100">
+          <Settings size={32} className={cn(!isOpen && "gap-4 animate-slow-spin spin-slow-animation")} />
           <span className="font-medium">{isOpen ? "Sticker Properties" : ""}</span>
         </div>
         {isOpen && (
           <button
             onClick={handleToggle}
-            className="p-2 -mr-2 rounded-full hover:bg-black/60a text-zinc-400 hover:text-zinc-100 transition-colors"
+            className="rounded-full hover:bg-black/60a text-zinc-400 hover:text-zinc-100 transition-colors"
           >
             <X size={20} />
           </button>

@@ -79,7 +79,7 @@ export default function GhostStickerEffectDark({
   };
 
   return (
-    <div className="flex min-h-content flex-col items-center justify-center gap-12 bg-radial-gradient from-40% to-100% p-8">
+    <div className="flex min-h-content flex-col items-center justify-center gap-12 p-8">
       {/* 1. Sticker Graphic */}
       <StickerEffect {...config}>
         <GhostDark
@@ -142,8 +142,8 @@ function NotchControls({
   return (
     <motion.div
       className={cn(
-        "bg-zinc-900 border border-zinc-800 shadow-xl overflow-hidden will-change-transform",
-        isOpen ? "rounded-3xl cursor-default" : "rounded-full cursor-pointer hover:bg-zinc-800"
+        "bg-black/50 backdrop-blur-sm border border-zinc-800 shadow-xl overflow-hidden will-change-transform max-w-16 h-16",
+        isOpen ? "rounded-3xl cursor-default max-h-96 max-w-140" : "rounded-full cursor-pointer hover:bg-black/70"
       )}
       animate={{
         height: isOpen ? 520 : 64,
@@ -155,18 +155,18 @@ function NotchControls({
       <div
         onClick={!isOpen ? handleToggle : undefined}
         className={cn(
-          "flex items-center justify-between h-16 px-6",
+          "flex items-center justify-between h-16 px-4",
           isOpen && "border-b border-zinc-800/50"
         )}
       >
-        <div className="flex items-center gap-3 text-zinc-100">
-          <Settings size={20} className={cn(!isOpen && "animate-spin-slow")} />
-          <span className="font-medium">{isOpen ? "Sticker Properties" : "Settings"}</span>
+        <div className="flex items-center gap-3 text-zinc-950">
+          <Settings size={32} className={cn(!isOpen && "animate-spin-slow")} />
+          <span className="font-medium">{isOpen ? "Sticker Properties" : ""}</span>
         </div>
         {isOpen && (
           <button
             onClick={handleToggle}
-            className="p-2 -mr-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 transition-colors"
+            className="p-2 -mr-2 rounded-full hover:bg-zinc-800 text-zinc-950 hover:text-zinc-950 transition-colors"
           >
             <X size={20} />
           </button>
@@ -183,10 +183,10 @@ function NotchControls({
             variants={presence}
             className="h-[calc(102%-64px)] overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-zinc-700"
           >
-            <div className="grid grid-cols-2 gap-x-8 gap-y-6 text-sm text-zinc-300">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-6 text-sm text-zinc-950">
               
               {/* Group: General */}
-              <motion.div variants={itemVariants} className="col-span-2 text-zinc-500 font-semibold uppercase text-xs tracking-wider">Appearance</motion.div>
+              <motion.div variants={itemVariants} className="col-span-2 text-zinc-800 font-semibold uppercase text-xs tracking-wider">Appearance</motion.div>
               <Control title="Radius" value={config.radius} min={0} max={20} step={1} onChange={(v) => onChange("radius", v)} variants={itemVariants} />
               <ColorControl title="Outline Color" value={config.outlineColor} onChange={(v) => onChange("outlineColor", v)} variants={itemVariants} />
               <Control title="Blur Deviation" value={config.blurDeviation} min={0} max={10} step={0.1} onChange={(v) => onChange("blurDeviation", v)} variants={itemVariants} />
@@ -199,7 +199,7 @@ function NotchControls({
               <SelectControl title="Type" value={config.turbulenceType} options={["fractalNoise", "turbulence"]} onChange={(v) => onChange("turbulenceType", v)} variants={itemVariants} />
 
               {/* Group: Lighting */}
-              <motion.div variants={itemVariants} className="col-span-2 flex items-center justify-between text-zinc-500 font-semibold uppercase text-xs tracking-wider mt-4">
+              <motion.div variants={itemVariants} className="col-span-2 flex items-center justify-between text-zinc-800 font-semibold uppercase text-xs tracking-wider mt-4">
                 Lighting
                 <ToggleControl label="Pointer Track" checked={config.pointerLighting} onChange={(v) => onChange("pointerLighting", v)} />
               </motion.div>
@@ -217,7 +217,7 @@ function NotchControls({
               )}
 
               {/* Group: Drop Shadow */}
-              <motion.div variants={itemVariants} className="col-span-2 text-zinc-500 font-semibold uppercase text-xs tracking-wider mt-4">Drop Shadow</motion.div>
+              <motion.div variants={itemVariants} className="col-span-2 text-zinc-800 font-semibold uppercase text-xs tracking-wider mt-4">Drop Shadow</motion.div>
               <Control title="Shadow X" value={config.dropShadowDx} min={-10} max={10} step={1} onChange={(v) => onChange("dropShadowDx", v)} variants={itemVariants} />
               <Control title="Shadow Y" value={config.dropShadowDy} min={-10} max={10} step={1} onChange={(v) => onChange("dropShadowDy", v)} variants={itemVariants} />
               <Control title="Shadow Blur" value={config.dropShadowDeviation} min={0} max={20} step={0.1} onChange={(v) => onChange("dropShadowDeviation", v)} variants={itemVariants} />
