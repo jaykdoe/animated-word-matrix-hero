@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react"
+import { useTheme } from "@wrksz/themes/client"
 import {
   groupByLength,
   makeRng,
@@ -19,7 +20,6 @@ import {
   type WordsByLength,
 } from "@/lib/word-matrix"
 import { UNIQUE_WORDS } from "@/lib/word-list"
-import { getFromLocalStorage } from "@/lib/local-storage"
 
 type WordMatrixBackgroundProps = {
   /** Words to rotate through. Needs short words to fill lines exactly. */
@@ -37,8 +37,8 @@ type WordMatrixBackgroundProps = {
   /** When true, each swapped word flashes a random bright color instead of the default monotone flash. */
   multicolor?: boolean
   /** Theme for the flash animation. */
-  theme?: "light" | "dark"
-   // new prop for effect
+  theme?: "light" | "dark" | string | null
+  /** new prop for effect */
   effect?: string | null
   /** Class name to apply to the container. */
   className?: string
@@ -131,16 +131,19 @@ export function WordMatrixBackground({
   swapsPerTick = 3,
   multicolor = false,
   effect = "multicolor",
+  theme: themeProp,
   className,
 }: WordMatrixBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
-  const [multicolorEffect, setMulticolorEffect] = useState(multicolor)
   const [grid, setGrid] = useState<Line[]>([])
   const [columns, setColumns] = useState(0)
-  const [selectedEffect, setSelectedEffect] = useState({ effect: "multicolor" })
   const wl: WordsByLength = useMemo(() => groupByLength(words), [words])
   const lineHeight = Math.round(fontSize * lineHeightRatio)
+  
+  const { theme: hookTheme, resolvedTheme } = useTheme()
+  const activeTheme = themeProp || resolvedTheme || hookTheme || "dark"
+  const isMulticolor = effect === "multicolor" || multicolor === true
 
   // Keep the latest grid in a ref so the swap loop doesn't re-subscribe.
   const gridRef = useRef<Line[]>([])
@@ -148,12 +151,6 @@ export function WordMatrixBackground({
   gridRef.current = grid
   columnsRef.current = columns
 
-    useEffect(() => {
-    setSelectedEffect({ effect: effect as "multicolor" | "monocolor" | string })
-    setMulticolorEffect(selectedEffect.effect === "multicolor" ? true : false)
-    console.log("multicolorEffect: ", multicolorEffect, "multicolor: ", multicolor, "effect: ", effect)
-  }, [effect, multicolor])
-  
   // Build the whole matrix for a given size.
   const build = useCallback(
     (cols: number, rows: number) => {
@@ -243,8 +240,6 @@ export function WordMatrixBackground({
     return () => window.clearInterval(id)
   }, [grid.length, swapIntervalMs, swapsPerTick, wl])
 
-const theme = getFromLocalStorage("theme");
-
   return (
     <div
       ref={containerRef}
@@ -260,21 +255,14 @@ const theme = getFromLocalStorage("theme");
         lineHeight: `${lineHeight}px`,
         fontFamily:
           'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
-        // Color tokens for the three states.
-        // Words are translucent; a freshly-swapped word flashes to full
-        // strength and eases back down.
         ["--wm-word" as string]:
-          `color-mix(in oklch, ${theme==="dark" ? "var(--foreground) 70%, transparent)" :  "var(--foreground) 70%, transparent)"}`,
+          "color-mix(in oklch, var(--foreground) 70%, transparent)",
         ["--wm-sep" as string]:
-          `color-mix(in oklch,  ${theme==="dark" ? "var(--foreground)" : theme==="light" ? "var(--background)" :  "var(--background)"} 10%, transparent)`,
-        ["--wm-flash" as string]: `${theme==="dark" ? "var(--foreground)" : theme==="light" ? "var(--background)" :  "var(--background)"}`,
-        //  ["--wm-flash-color" as string]: multicolorEffect ? randomFlashColor() : undefined,
-        color: "#E8E8E8",
-        // ["--wm-word" as string]:
-        //   "color-mix(in oklch, var(--foreground) 40%, transparent)",
-        // ["--wm-sep" as string]:
-        //   "color-mix(in oklch, var(--foreground) 10%, transparent)",
-        // ["--wm-flash" as string]: "var(--foreground)",
+          activeTheme === "dark"
+            ? "color-mix(in oklch, var(--foreground) 10%, transparent)"
+            : "color-mix(in oklch, var(--foreground) 15%, transparent)",
+        ["--wm-flash" as string]: "var(--foreground)",
+        color: "var(--foreground)",
       }}
     >
       {/* Offscreen sample used to measure exact monospace character width. */}
@@ -317,7 +305,7 @@ const theme = getFromLocalStorage("theme");
           words={words}
           columns={columns}
           separator={separator}
-          multicolor={!multicolorEffect}
+          multicolor={isMulticolor}
         />
       ))}
     </div>

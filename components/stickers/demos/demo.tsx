@@ -1,17 +1,30 @@
 import { StickerEffect } from '../svg-sticker-effect';
 
-export default function StickerDemo() {
+interface StickerDemoProps {
+  theme?: "light" | "dark" | string | null;
+  userSelectedEffect?: "multicolor" | "monocolor" | string | null;
+}
+
+export default function StickerDemo({
+  theme = "dark",
+  userSelectedEffect = "multicolor",
+}: StickerDemoProps) {
+  const isDark = theme === "dark";
+  const isMulticolor = userSelectedEffect === "multicolor";
+
   return (
     <div className="flex min-h-1/2 items-center justify-center bg-transparent shadow-none drop-shadow-none">
       <StickerEffect 
         pointerLighting={true}
-        outlineColor="#ffffff"
+        outlineColor={isDark ? "#ffffff" : "#000000"}
+        lightingColor={isDark ? "hsla(0, 0%, 80%, 0.5)" : "hsla(0, 0%, 100%, 0.7)"}
         radius={4}
       >
         <svg
           viewBox="0 0 885 1059"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          style={!isMulticolor ? { filter: "grayscale(1)" } : undefined}
         >
           <rect x="528" y="962" width="115" height="52" rx="26" transform="rotate(-90 528 962)" fill="#AF7128" stroke="#000" strokeWidth="6" />
           <path d="M552 948a3 3 0 1 0-6 0h6Zm0 12v-12h-6v12h6Z" fill="#000" />

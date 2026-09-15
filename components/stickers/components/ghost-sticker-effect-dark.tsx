@@ -55,15 +55,25 @@ const defaultConfig: StickerConfig = {
   dropShadowDeviation: 3,
 };
 
+interface GhostStickerEffectDarkProps {
+  userSelectedEffect?: "multicolor" | "monocolor" | string | null;
+  onChange?: (value: string) => void;
+  theme?: "light" | "dark" | string | null;
+}
+
 // --- Main App Component ---
-export default function GhostStickerEffectDark() {
-  const [config, setConfig] = useState<StickerConfig>(defaultConfig);
-  const [mounted, setMounted] = useState(false)
-  const [mountedEffect, setMountedEffect] = useState<"multicolor" | "monocolor">("multicolor")
-  const effect = isItemInLocalStorage("colorEffect") === true ? getFromLocalStorage("colorEffect") : null
-  const [theme, setTheme] = useState<"light" | "dark" | string | null | undefined>(isItemInLocalStorage("theme") === true ? getFromLocalStorage("theme") : 'dark')
-  const [selectedEffect, setSelectedEffect] = useState({ effect: "multicolor" })
-   const handleChange = (value): void => { setSelectedEffect({ effect: value }) }
+export default function GhostStickerEffectDark({
+  userSelectedEffect = "multicolor",
+  onChange,
+  theme = "light"
+}: GhostStickerEffectDarkProps) {
+  const isMulticolor = userSelectedEffect === "multicolor";
+  const [config, setConfig] = useState<StickerConfig>({
+    ...defaultConfig,
+    outlineColor: "#000000",
+    lightingColor: isMulticolor ? "#f59e0b" : "#ffffff",
+  });
+
   const updateConfig = (key: keyof StickerConfig, value: string | number | boolean) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
   };
@@ -73,12 +83,14 @@ export default function GhostStickerEffectDark() {
       {/* 1. Sticker Graphic */}
       <StickerEffect {...config}>
         <GhostDark
-          userSelectedEffect={selectedEffect.effect}
-          onChange={handleChange}
-          // color={selectedEffect.effect === "multicolor" ? "yellow-500/30" : "white/30"}
-          width={128} height={128} 
+          userSelectedEffect={userSelectedEffect}
+          onChange={onChange || (() => {})}
+          color={isMulticolor ? "#f59e0b" : "#000000"}
+          width={128}
+          height={128} 
           size={128}
-          />
+          style={!isMulticolor ? { filter: "grayscale(1)" } : undefined}
+        />
       </StickerEffect>
 
       {/* 2. Control Panel Notch */}

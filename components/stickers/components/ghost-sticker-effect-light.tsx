@@ -55,15 +55,25 @@ const defaultConfig: StickerConfig = {
   dropShadowDeviation: 3,
 };
 
+interface GhostStickerEffectLightProps {
+  userSelectedEffect?: "multicolor" | "monocolor" | string | null;
+  onChange?: (value: string) => void;
+  theme?: "light" | "dark" | string | null;
+}
+
 // --- Main App Component ---
-export default function GhostStickerEffectLight() {
-  const [config, setConfig] = useState<StickerConfig>(defaultConfig);
-  const [mounted, setMounted] = useState(false)
-  const [mountedEffect, setMountedEffect] = useState<"multicolor" | "monocolor">("multicolor")
-  const effect = isItemInLocalStorage("colorEffect") === true ? getFromLocalStorage("colorEffect") : null
-  const [theme, setTheme] = useState<"light" | "dark" | string | null | undefined>(isItemInLocalStorage("theme") === true ? getFromLocalStorage("theme") : 'dark')
-  const [selectedEffect, setSelectedEffect] = useState({ effect: "multicolor" })
-   const handleChange = (value): void => { setSelectedEffect({ effect: value }) }
+export default function GhostStickerEffectLight({
+  userSelectedEffect = "multicolor",
+  onChange,
+  theme = "dark"
+}: GhostStickerEffectLightProps) {
+  const isMulticolor = userSelectedEffect === "multicolor";
+  const [config, setConfig] = useState<StickerConfig>({
+    ...defaultConfig,
+    outlineColor: "#ffffff",
+    lightingColor: isMulticolor ? "#38bdf8" : "#cccccc",
+  });
+
   const updateConfig = (key: keyof StickerConfig, value: string | number | boolean) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
   };
@@ -73,12 +83,14 @@ export default function GhostStickerEffectLight() {
       {/* 1. Sticker Graphic */}
       <StickerEffect {...config}>
         <GhostLight
-          userSelectedEffect={selectedEffect.effect}
-          onChange={handleChange}
-          // color={selectedEffect.effect === "multicolor" ? "yellow-500/30" : "white/30"}
-          width={128} height={128} 
+          userSelectedEffect={userSelectedEffect}
+          onChange={onChange || (() => {})}
+          color={isMulticolor ? "#38bdf8" : "#ffffff"}
+          width={128}
+          height={128} 
           size={128}
-          />
+          style={!isMulticolor ? { filter: "grayscale(1)" } : undefined}
+        />
       </StickerEffect>
 
       {/* 2. Control Panel Notch */}
@@ -130,8 +142,8 @@ function NotchControls({
   return (
     <motion.div
       className={cn(
-        "bg-zinc-900 border border-zinc-800 shadow-xl overflow-hidden will-change-transform",
-        isOpen ? "rounded-3xl cursor-default" : "rounded-full cursor-pointer hover:bg-zinc-800"
+        "bg-black/40 backdrop-blur-sm border border-zinc-800 shadow-xl overflow-hidden will-change-transform w-24 h-24",
+        isOpen ? "rounded-3xl cursor-default max-h-96" : "rounded-full cursor-pointer hover:bg-black/60"
       )}
       animate={{
         height: isOpen ? 520 : 64,
@@ -149,12 +161,12 @@ function NotchControls({
       >
         <div className="flex items-center gap-3 text-zinc-100">
           <Settings size={20} className={cn(!isOpen && "animate-spin-slow")} />
-          <span className="font-medium">{isOpen ? "Sticker Properties" : "Settings"}</span>
+          <span className="font-medium">{isOpen ? "Sticker Properties" : ""}</span>
         </div>
         {isOpen && (
           <button
             onClick={handleToggle}
-            className="p-2 -mr-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 transition-colors"
+            className="p-2 -mr-2 rounded-full hover:bg-black/60a text-zinc-400 hover:text-zinc-100 transition-colors"
           >
             <X size={20} />
           </button>

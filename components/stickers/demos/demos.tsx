@@ -1,12 +1,24 @@
 import React from 'react';
-import { StickerEffect } from './svg-sticker-effects';
+import { StickerEffect } from '../svg-sticker-effects';
 
-export default function StickerDemos() {
+interface StickerDemosProps {
+  theme?: "light" | "dark" | string | null;
+  userSelectedEffect?: "multicolor" | "monocolor" | string | null;
+}
+
+export default function StickerDemos({
+  theme = "dark",
+  userSelectedEffect = "multicolor",
+}: StickerDemosProps) {
+  const isDark = theme === "dark";
+  const isMulticolor = userSelectedEffect === "multicolor";
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-transparent dark:bg-transparent text-black dark:text-white transition-colors duration-300 float-animation">
       <StickerEffect
         radius={4}
-        outlineColor="#ffffff"
+        outlineColor={isDark ? "#ffffff" : "#000000"}
+        lightingColor={isDark ? "hsla(0, 0%, 80%, 0.5)" : "hsla(0, 0%, 100%, 0.7)"}
         pointerTracking={true}
         // You can override any of the default props here based on the Tweakpane settings
       >
@@ -15,6 +27,7 @@ export default function StickerDemos() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="overflow-visible w-full h-auto"
+          style={!isMulticolor ? { filter: "grayscale(1)" } : undefined}
         >
           {/* Insert the original SVG paths from the CodePen here */}
           <rect

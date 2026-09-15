@@ -1,40 +1,39 @@
 'use client'
 
 import { useState, useEffect } from "react"
+import { useTheme } from "@wrksz/themes/client"
 import { WordMatrixBackground } from "@/components/word-matrix-background"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { MulticolorSelect } from "@/components/ui/multicolor-toggle"
 import { addToLocalStorage, getFromLocalStorage, isItemInLocalStorage } from "@/lib/local-storage"
-import StickerDemo from "@/components/stickers/demos/demo"
-import StickerDemos from "@/components/stickers/demos"
 import StickerPage from "./sticker/page"
-
-interface effectProps {
-  effect:  "multicolor" | "monocolor" | string | null
-}
-interface multiColorSelectProps {
-  userSelectedEffect:  "multicolor" | "monocolor" | string | null
-  onChange: (value: string) => void
-}
 
 export default function Page() {
   const [mounted, setMounted] = useState(false)
-  const [mountedEffect, setMountedEffect] = useState<"multicolor" | "monocolor">("multicolor")
-  const effect = isItemInLocalStorage("colorEffect") === true ? getFromLocalStorage("colorEffect") : null
-  const [theme, setTheme] = useState<"light" | "dark" | string | null | undefined>(isItemInLocalStorage("theme") === true ? getFromLocalStorage("theme") : 'dark')
-  const [selectedEffect, setSelectedEffect] = useState({ effect: "multicolor" })
-   const handleChange = (value: multiColorSelectProps["userSelectedEffect"]) => {
-    setSelectedEffect({ effect: value })
-  }
+  const { theme, resolvedTheme, setTheme } = useTheme()
+  const [selectedEffect, setSelectedEffect] = useState<"multicolor" | "monocolor">("multicolor")
 
   useEffect(() => {
     setMounted(true)
-    setMountedEffect(effect as "multicolor" | "monocolor")
+    if (isItemInLocalStorage("colorEffect")) {
+      const stored = getFromLocalStorage("colorEffect")
+      if (stored === "multicolor" || stored === "monocolor") {
+        setSelectedEffect(stored)
+      }
+    }
   }, [])
- 
+
+  const handleEffectChange = (value: string) => {
+    const nextEffect = (value === "monocolor" ? "monocolor" : "multicolor") as "multicolor" | "monocolor"
+    setSelectedEffect(nextEffect)
+    addToLocalStorage("colorEffect", nextEffect)
+  }
+
+  const currentTheme = (resolvedTheme || theme || "dark") as "light" | "dark"
+
   return (
-    <main className={`relative flex min-h-screen items-center justify-center overflow-hidden bg-background text-foreground`}>
-      <WordMatrixBackground effect={selectedEffect.effect} />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background text-foreground">
+      <WordMatrixBackground effect={selectedEffect} theme={currentTheme} />
 
       {/* Vignette so the centered content stays legible over the matrix. */}
       <div
@@ -57,12 +56,20 @@ export default function Page() {
           A living field of text that measures itself, packs each row exactly
           full, and endlessly rotates words in place.
         </p>
-              <div><ThemeToggle userSelectedEffect={selectedEffect.effect} onChange={handleChange}/></div>
-               <div><MulticolorSelect userSelectedEffect={selectedEffect.effect} onChange={handleChange}/></div>
-               <div><StickerPage theme={theme} onChangeTheme={setTheme} userSelectedEffect={selectedEffect.effect} onChange={handleChange} /></div>
-               {/* <div><StickerDemo /></div> */}
-               {/* <div className="mt-6 z-999 text-rose-500 text-pretty text-xl leading-relaxe md:text-base">multicolor: {selectedEffect.effect}</div>
-               <div className="text-pretty text-sm leading-relaxed text-muted-foreground md:text-base">{selectedEffect.effect}</div> */}
+        <div>
+          <ThemeToggle userSelectedEffect={selectedEffect} onChange={handleEffectChange} />
+        </div>
+        <div>
+          <MulticolorSelect userSelectedEffect={selectedEffect} onChange={handleEffectChange} />
+        </div>
+        <div>
+          <StickerPage
+            theme={currentTheme}
+            onChangeTheme={setTheme}
+            userSelectedEffect={selectedEffect}
+            onChange={handleEffectChange}
+          />
+        </div>
       </div>
     </main>
   )
